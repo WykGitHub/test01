@@ -1,6 +1,13 @@
 package cn.hp.entity;
 
 public class ParkingInfo {
+
+
+    //修改了
+    private String test01;
+
+
+
     private int pdId;
     private int pId;
     private String beginDate;
