@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.hp.mapper.TblMapper">
+
+    <resultMap id="tblInfo" type="TblInfo">
+        <result property="pId" column="pId"></result>
+        <result property="carNo" column="carNo"></result>
+        <result property="pMark" column="pMark"></result>
+        <collection property="parkingInfos" ofType="ParkingInfo">
+            <result property="pdId" column="pdId"></result>
+            <result property="pId" column="pId"></result>
+            <result property="beginDate" column="beginDate"></result>
+            <result property="endDate" column="endDate"></result>
+            <result property="pDur" column="pDur"></result>
+            <result property="pName" column="pName"></result>
+            <result property="pAddress" column="pAddress"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findAll" resultMap="tblInfo">
+       select * from tbl_parking a,tbl_parking_detail b where a.pId=b.pId
+    </select>
+</mapper>

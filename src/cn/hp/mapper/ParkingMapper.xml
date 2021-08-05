@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.hp.mapper.ParkingMapper">
+    <resultMap id="parkinglist" type="ParkingInfo">
+        <result property="pdId" column="pdId"></result>
+        <result property="pId" column="pId"></result>
+        <result property="beginDate" column="beginDate"></result>
+        <result property="endDate" column="endDate"></result>
+        <result property="pDur" column="pDur"></result>
+        <result property="pName" column="pName"></result>
+        <result property="pAddress" column="pAddress"></result>
+        <association property="tblInfo" javaType="TblInfo" resultMap="cc"></association>
+    </resultMap>
+
+    <resultMap id="cc" type="TblInfo">
+        <result property="pId" column="pId"></result>
+        <result property="carNo" column="carNo"></result>
+        <result property="pMark" column="pMark"></result>
+    </resultMap>
+
+
+
+    <select id="findAll" resultMap="parkinglist">
+   select a.*,b.carNo  from tbl_parking_detail a,tbl_parking b where a.pId = b.pId
+    </select>
+
+    <select id="findParkByDur" parameterType="int" resultType="ParkingInfo">
+    select * from tbl_parking_detail where pDur>#{pDur}
+    </select>
+
+    <select id="findParkByPdId" parameterType="int" resultType="ParkingInfo">
+        select  * from  tbl_parking_detail where pdId=#{pdId}
+    </select>
+    
+    <select id="findParkByName" resultType="ParkingInfo" parameterType="String">
+        select * from tbl_parking_detail
+        <trim prefix="where" prefixOverrides="and">
+        <if test="pName!=null and pName!=''">
+            and pName like concat ('%',concat(#{pName},'%'))
+        </if>
+
+        </trim>
+
+    </select>
+
+    <select id="findPark" resultType="ParkingInfo">
+        select * from tbl_parking_detail where 1=1
+
+     <if test="name!=null and name!=''">
+         and pName like concat ('%',concat(#{name},'%'))
+     </if>
+     <if test="pdur!=null and pdur!=''">
+         and pDur>#{pdur}
+     </if>
+
+    </select>
+
+    <select id="findParks" resultType="ParkingInfo">
+        select * from tbl_parking_detail where 1=1
+        <choose>
+            <when test="pdur!=null and pdur!=''">
+                and pDur>#{pdur}
+            </when>
+
+            <when test="name!=null and name!=''">
+                and pName like concat ('%',concat(#{name},'%'))
+            </when>
+            <otherwise>
+                and pAddress=#{address}
+            </otherwise>
+        </choose>
+        
+
+    </select>
+
+    <select id="findParkByMap" parameterType="map" resultType="ParkingInfo">
+         select * from tbl_parking_detail where pAddress=#{pAddress} and pDur>#{pDur}
+    </select>
+
+    <delete id="deletePark" parameterType="int">
+        delete  from tbl_parking_detail where pdId = #{pdId}
+    </delete>
+
+    <update id="update" parameterType="ParkingInfo">
+        update tbl_parking_detail
+        <set>
+            <if test="pName!=null and pName!=''">pName=#{pName}</if>
+<!--            <if test="pdId!=null and pdId!=''">where pdId=#{pdId}</if>-->
+             <where>
+                <if test="pdId!=null and pdId!=''">pdId=#{pdId}</if>
+             </where>
+        </set>
+
+
+    </update>
+
+    <insert id="insert" parameterType="ParkingInfo">
+        insert into tbl_parking_detail values(null,#{pId},#{beginDate},#{endDate},#{pDur},#{pName},#{pAddress})
+    </insert>
+
+    <select id="findAllArray" resultType="ParkingInfo">
+        select * from tbl_parking_detail where pId in
+            <foreach collection="array" item="pId" open="(" separator="," close=")">
+                    #{pId}
+            </foreach>
+
+    </select>
+</mapper>
